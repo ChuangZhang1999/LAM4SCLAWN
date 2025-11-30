@@ -458,7 +458,52 @@ End paper poster -->
 
 <section class="section" id="code">
   <div class="container is-max-desktop content">
-    <h2 class="title is-3" style="text-align: center;">Considered Scenario</h2>
+    <h2 class="title is-3" style="text-align: center;">Considered Scenario and Problem Formulation</h2>
+    <div class="latex">
+\[
+    \begin{aligned}
+        \max_{\{\mathbf{q}_t, \mathbf{w}_t\}_{t=1}^T} \quad & \sum_{t=1}^T R_s(\mathbf{q}_t, \mathbf{w}_t) \\
+        \text{s.t.} \qquad &  \mathbf{q}_t \in \mathcal{Q}, \; \forall t \in \mathcal{T},\\
+        &  ||\mathbf{q}_t - \mathbf{q}_{t-1}|| \leq v_{max}\Delta t, \; \forall t \in \mathcal{T},\\
+        & \|\mathbf{w}_t\|^2 \le P_{\max}, \; \forall t \in \mathcal{T},
+    \end{aligned}
+\]
+</div>
+
+<p>where \( v_{max} \) and \( P_{max} \) are the maximum flight speed of the AAV and maximum transmit power of the base station, respectively.</p>
+
+<p>To solve this problem, we adopt a single-agent reinforcement learning (RL) setup. In this setup, the Markov decision process can be reformulated as follows.</p>
+
+<p><b>State space:</b> The state at time slot \( t \) includes all information necessary to make decisions as follows:</p>
+
+<div class="latex">
+\[
+    s_t = \big[\mathbf{q}_t,\, \mathbf{d}_t^\text{BS},\, \mathbf{d}_t^\text{Eve},\, \mathbf{d}_t^\text{Jam},\, \Re(\mathbf{h}_{t}^{ba}),\, \Im(\mathbf{h}_{t}^{ba}) \big],
+\]
+</div>
+
+<p>where \( \mathbf{q}_t \in \mathbb{R}^2 \) denotes the horizontal position of the AAV, \( \mathbf{d}_t^\text{BS} \) is the relative position vector from the AAV to the base station, \( \mathbf{d}_t^\text{Eve} \) is the relative position vector from the AAV to the eavesdropper, and \( \mathbf{d}_t^\text{Jam} \) is the relative position vector from the AAV to the jammer, while \( \mathbf{h}_{t}^{ba} \in \mathbb{C}^{N_t} \) is the BS-to-UAV channel response at time \( t \).</p>
+
+<p><b>Action space:</b> The action at the time slot \( t \) specifies both the movement of the AAV and the beamforming vector of the base station as follows:</p>
+
+<div class="latex">
+\[
+    a_t = [\Delta x_t, \Delta y_t, \Re(\mathbf{w}_t), \Im(\mathbf{w}_t)],
+\]
+</div>
+
+<p>where \( \Delta x_t \) and \( \Delta y_t \) are the movement distance of the AAV along \( x \) and \( y \) at time slot \( t \), respectively. Moreover, \( \mathbf{w}_t \) is the beamforming vector of the base station at time slot \( t \).</p>
+
+<p><b>Reward function:</b> The instantaneous reward is defined as the secrecy rate at the time slot \( t \): </p>
+
+<div class="latex">
+\[
+    R(s_t, a_t) = R_s(\mathbf{q}_t, \mathbf{w}_t).
+\]
+</div>
+
+<p>The learned joint policy is executed in a coordinated manner between the BS and the AAV. Specifically, beamforming actions are applied at the BS by updating the antenna array weights in real time, while trajectory commands are transmitted from the BS to the AAV, enabling dynamic adjustment of its speed and heading. This coordinated execution mechanism ensures that the policy learned by the single-agent RL is applied effectively, achieving synchronized optimization of vehicle trajectory and beamforming to enhance the overall secrecy performance of the system.</p>
+
   </div>
 </section>
 
