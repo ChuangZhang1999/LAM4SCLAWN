@@ -466,6 +466,65 @@ End paper poster -->
 <section class="section" id="code">
   <div class="container is-max-desktop content">
     <h2 class="title is-3" style="text-align: center;">Our Method</h2>
+    <p><b>Step 1: Generating multiple revised states and rewards using the LLM.</b></p>
+<p>
+At the beginning of each iteration, the LLM receives the manually defined observation space and the task description. 
+Based on this information, it outputs \( K \) candidate state-transformation functions and \( K \) candidate intrinsic reward functions, 
+each of which incorporates geometric relations, distances, angles and communication-related metrics. 
+These \( K \) candidates form a diverse set of state and reward designs to be evaluated in the current iteration.
+</p>
+
+<p><b>Step 2: Training the RL agent with the \( K \) LLM-generated candidates.</b></p>
+<p>
+For each of the \( K \) candidate designs, an RL agent is trained using the corresponding revised state and reward. 
+During these parallel training processes, the agents interact with the LAWN environment, and their learning performances reflect 
+how effective the different LLM-generated state features and reward structures are.
+</p>
+
+<p><b>Step 3: Collecting feedback from RL training results.</b></p>
+<p>
+After each training round, we extract performance feedback from the learning trajectories of all \( K \) candidates in order to 
+evaluate how effective the LLM-generated state representations are. 
+In particular, we focus on two quantities for each candidate: the reward evolution and a feature-wise Lipschitz continuity measure 
+that captures the sensitivity of the reward to each revised state dimension.
+</p>
+
+<p>
+For the \( i \)-th enhanced state component \( s'_i \) (of a given candidate), we compute an empirical Lipschitz constant along 
+the policy trajectory as follows:
+</p>
+
+<!-- LaTeX 公式显示模式 -->
+<p>
+\[
+L_i \approx \max_t 
+\frac{\lvert r_t - r_{t-1} \rvert}
+     {\lvert s'_i(t) - s'_i(t-1) \rvert + \varepsilon},
+\]
+</p>
+
+<p>
+where \( \varepsilon \) is a small constant to avoid numerical degeneracy. 
+A smaller \( L_i \) indicates that the reward varies smoothly with respect to \( s'_i \) and generally leads to more stable 
+policy updates, whereas a larger value reveals that the introduced feature may cause irregular reward fluctuations. 
+Together with the reward trend, these Lipschitz coefficients computed for all \( K \) candidates serve as direct feedback for 
+assessing the quality of the generated state features and are subsequently fed back to the LLM in the next refinement iteration.
+</p>
+
+<p><b>Step 4: Feeding RL feedback back into the LLM for refinement.</b></p>
+<p>
+The collected RL feedback from all \( K \) candidates is transformed into structured textual instructions and given to the LLM. 
+Guided by these instructions, the LLM updates the state-transformation logic, simplifies or strengthens certain feature calculations, 
+removes unstable components, and adjusts intrinsic reward terms based on the observed learning performance and stability of the 
+RL agents.
+</p>
+
+<p><b>Step 5: Repeating the loop to progressively improve performance.</b></p>
+<p>
+The updated state and reward functions are then used to generate a new set of \( K \) candidates for the next training iteration, 
+forming a closed-loop process. With each iteration, the LLM produces more stable and informative features, leading to smoother 
+training curves, faster convergence, and higher final secure performance in LAWNs.
+</p>
   </div>
 </section>
     
