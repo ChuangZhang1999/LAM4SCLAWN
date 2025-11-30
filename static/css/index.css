@@ -86,6 +86,12 @@ body {
   font-variant: small-caps;
 }
 
+.small-img {
+  width: 80%;        /* 调整缩放比例 */
+  height: auto;      
+  margin: 0 auto;    /* 居中 */
+  display: block;
+}
 
 /* Hero Section Modernization */
 .hero {
